@@ -102,7 +102,7 @@ class WAFHarvester(SpatialHarvester, SingletonPlugin):
                 for url, modified_date in _extract_waf(content,source_url,scraper):
                     url_to_modified_harvest[url] = modified_date
             else:
-                for url, modified_date in _extract_waf(content.encode('utf-8'),source_url,scraper):
+                for url, modified_date in _extract_waf(content.decode('utf-8'),source_url,scraper):
                     url_to_modified_harvest[url] = modified_date
         except Exception as e:
             msg = 'Error extracting URLs from %s, error was %s' % (source_url, e)
