@@ -1,11 +1,15 @@
+-e git+https://github.com/ckan/ckanext-harvest.git#egg=ckanext-harvest
 ckantoolkit
 GeoAlchemy>=0.6
 GeoAlchemy2==0.5.0
 Shapely>=1.2.13
+pika
+pyOpenSSL
 pyproj==2.6.1
 OWSLib==0.18.0
 lxml>=2.3
 argparse
+pytest-ckan
 pyparsing>=2.1.10
 requests>=1.1.0
 six

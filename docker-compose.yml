@@ -1,0 +1,54 @@
+---
+version: "3.7"
+services:
+  app:
+    image: datagov/ckanext-spatial:${CKAN_VERSION} # ensures docker-compose will rebuild the right image in case we change CKAN_VERSION
+    build:
+      context: .
+      args:
+        CKAN_VERSION: ${CKAN_VERSION}
+    environment:
+      CKAN_SQLALCHEMY_URL: postgresql://ckan_default:pass@postgres/ckan_test
+      CKAN_DATASTORE_WRITE_URL: postgresql://datastore_write:pass@postgres/datastore_test
+      CKAN_DATASTORE_READ_URL: postgresql://datastore_read:pass@postgres/datastore_test
+      CKAN_SOLR_URL: http://solr:8983/solr/ckan
+      CKAN_REDIS_URL: redis://redis:6379/1
+      PGPASSWORD: postgres
+      CKAN__PLUGINS: harvest spatial_metadata spatial_query spatial_harvest_metadata_api gemini_csw_harvester gemini_doc_harvester gemini_waf_harvester test_spatial_plugin
+      PYTHONDONTWRITEBYTECODE: 1
+    working_dir: /app
+    ports:
+      - "5000:5000"
+    depends_on:
+      - postgres
+      - redis
+      - solr
+    volumes:
+      - .:/app
+      - ckan_storage:/var/lib/ckan
+  postgres:
+    image: postgis/postgis:10-3.1
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+    healthcheck:
+      test: ["CMD", "pg_isready -u postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    ports:
+      - "5432:5432"
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+  redis:
+    image: redis:3
+  solr:
+    image: ckan/ckan-solr-dev:2.9
+    ports:
+      - "8983:8983"
+
+volumes:
+  ckan_storage:
+  pg_data:
+  solr_data:
